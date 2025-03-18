@@ -1,0 +1,18 @@
+steps:
+#Edit Image SHA for GKE
+- name: 'gcr.io/cloud-builders/gcloud'
+ entrypoint: 'sed'
+ args:
+ - '-i'
+ - 's/COMMIT_SHA/$COMMIT_SHA/g'
+ - 'build/k8s/deployment.yaml'
+
+# Push to GKE
+- name: "gcr.io/cloud-builders/gke-deploy"
+ args:
+   [
+     'apply',
+     '--filename', './build/k8s/deployment.yaml',
+     '--location', '${_GCP_REGION}',
+     '--cluster', '${_COMPUTE_CLUSTER}'
+   ]
